@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="1000" height="1000"
+<canvas id="myCanvas" width="600" height="600"
 style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
@@ -11,11 +11,17 @@ var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 
 var timestep = 50;
-var planets = [
-	{name:"earth", mass: 10, x: 450, y: 250, size:15, color:"#808080"},
-	{name:"sun", mass: 20, x: 700, y: 500, size:20, color:"#FFFF00"}
-	];
-var ship = {pX:300, pY:100, vX:0.03, vY:0};
+// var planets = [
+// 	{name:"earth", mass: 10, x: 450, y: 250, size:15, color:"#808080"},
+// 	{name:"sun", mass: 20, x: 700, y: 500, size:20, color:"#FFFF00"}
+// 	];
+var planets = [];
+var planetTypes = [
+	{name:"star", mass: 20, color:"#FFFF00", size: 20},
+	{name:"earth", mass: 10, color:"#0000FF", size: 10},
+	{name:"star", mass: 5, color:"#808080", size: 5}
+]
+var ship = {pX:10, pY:10, vX:0.03, vY:0.03};
 
 c.onmousedown = function(e){
 	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, size:15, color:"#000000"});
@@ -23,6 +29,16 @@ c.onmousedown = function(e){
 
 c.onmouseup = function(e){
 	planets.pop();
+}
+
+var generatePlanets = function (numberPlanets) {
+	for (i=0; i < numberPlanets; i++) {
+		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
+		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, size: planetType.size};
+		planet.x = Math.floor(Math.random() * (c.width - 100));
+		planet.y = Math.floor(Math.random() * (c.height - 100));	
+		planets.push(planet);	
+	}
 }
 
 var drawPlanets = function () {
@@ -35,7 +51,6 @@ var drawPlanets = function () {
 };
 
 var move = function (){
-	// ctx.clearRect(ship.pX, ship.pY, 10, 10);
 	ship.pX += ship.vX*timestep;
 	ship.pY += ship.vY*timestep;
 	ctx.fillRect(ship.pX, ship.pY, 10, 10);
@@ -64,6 +79,8 @@ var step = function (){
 };
 
 
+generatePlanets(7);
+console.log(planets);
 
 
 for (i=0; i<10000*timestep; i+=timestep) {
