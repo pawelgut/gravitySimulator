@@ -10,7 +10,6 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 
-var timestep = 50;
 // var planets = [
 // 	{name:"earth", mass: 10, x: 450, y: 250, size:15, color:"#808080"},
 // 	{name:"sun", mass: 20, x: 700, y: 500, size:20, color:"#FFFF00"}
@@ -36,8 +35,8 @@ var generatePlanets = function (numberPlanets) {
 		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
 		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, size: planetType.size};
 		planet.x = Math.floor(Math.random() * (c.width - 100));
-		planet.y = Math.floor(Math.random() * (c.height - 100));	
-		planets.push(planet);	
+		planet.y = Math.floor(Math.random() * (c.height - 100));
+		planets.push(planet);
 	}
 }
 
@@ -59,8 +58,10 @@ var drawFinishLine = function () {
 }
 
 var move = function (){
-	ship.pX += ship.vX*timestep;
-	ship.pY += ship.vY*timestep;
+  var time = new Date();
+	ship.pX += ship.vX * time.getSeconds();
+	ship.pY += ship.vX * time.getSeconds();
+
 	ctx.fillStyle = "#FF0000";
 	ctx.beginPath();
 	ctx.arc(ship.pX, ship.pY, 10, 0,2*Math.PI);
@@ -84,7 +85,7 @@ var updateVelocity = function (){
 
 var checkIfGameFinished = function () {
 	if ((ship.pX + ship.pY) > 1100) {
-		console.log("You won!")
+		// console.log("You won!")
 		alert("You won!");
 	}
 }
@@ -103,11 +104,23 @@ generatePlanets(7);
 console.log(planets);
 
 
+/*
 for (i=0; i<10000*timestep; i+=timestep) {
   setTimeout(step, i);
 }
+*/
 
-</script> 
+function Start() {
+  window.requestAnimationFrame(Update);
+}
+
+function Update() {
+  step();
+  window.requestAnimationFrame(Update);
+}
+
+Start();
+</script>
 
 </body>
 </html>
