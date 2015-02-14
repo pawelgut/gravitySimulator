@@ -77,22 +77,25 @@ var updateVelocity = function (){
 	    absForce = p.mass/Math.pow(magnitude, 2);
 		changeX = componentX*absForce;
 		changeY = componentY*absForce;
-
-		ship.vX += changeX;
-		ship.vY += changeY;
+        if (!isColliding(p)) {
+			ship.vX += changeX;
+			ship.vY += changeY;
+		}
 	}
 };
 
 var checkForCollision = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
-		if (p.name != "boost") {
-			distanceSquared = Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2);
-			if (distanceSquared < Math.pow(ship.radius + p.radius, 2)) {
-				gameFailed();
-			}
+		if ((p.name != "boost") && isColliding(p)) {
+			gameFailed();
 		}
 	}
+};
+
+var isColliding = function (planet) {
+	distanceSquared = Math.pow(planet.x - ship.pX, 2) + Math.pow(planet.y - ship.pY, 2);
+	return distanceSquared < Math.pow(ship.radius + planet.radius, 2)
 };
 
 var checkIfGameFinished = function () {
@@ -103,11 +106,11 @@ var checkIfGameFinished = function () {
 
 var gameFailed = function () {
 	console.log("YOU LOSE");
-}
+};
 
 var gameWon = function () {
 	console.log("YOU WIN");
-}
+};
 
 var step = function (){
 	ctx.clearRect(0, 0, c.width, c.height);
