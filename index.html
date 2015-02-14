@@ -9,44 +9,39 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
-
 var timestep = 50;
-// var planets = [
-// 	{name:"earth", mass: 10, x: 450, y: 250, size:15, color:"#808080"},
-// 	{name:"sun", mass: 20, x: 700, y: 500, size:20, color:"#FFFF00"}
-// 	];
 var planets = [];
 var planetTypes = [
-	{name:"star", mass: 20, color:"#FFFF00", size: 20},
-	{name:"earth", mass: 10, color:"#0000FF", size: 10},
-	{name:"star", mass: 5, color:"#808080", size: 5}
-]
-var ship = {pX:10, pY:10, vX:0.03, vY:0.03};
+	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
+	{name:"earth", mass: 10, color:"#0000FF", radius: 10},
+	{name:"star", mass: 5, color:"#808080", radius: 5}
+];
+var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
 
 c.onmousedown = function(e){
-	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, size:15, color:"#000000"});
-}
+	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, radius:15, color:"#000000"});
+};
 
 c.onmouseup = function(e){
 	planets.pop();
-}
+};
 
 var generatePlanets = function (numberPlanets) {
 	for (i=0; i < numberPlanets; i++) {
 		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
-		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, size: planetType.size};
+		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, radius: planetType.radius};
 		planet.x = Math.floor(Math.random() * (c.width - 100));
-		planet.y = Math.floor(Math.random() * (c.height - 100));	
-		planets.push(planet);	
+		planet.y = Math.floor(Math.random() * (c.height - 100));
+		planets.push(planet);
 	}
-}
+};
 
 var drawPlanets = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
     	ctx.fillStyle = p.color;
 		ctx.beginPath();
-		ctx.arc(p.x, p.y, p.size, 0,2*Math.PI);
+		ctx.arc(p.x, p.y, p.radius, 0,2*Math.PI);
 		ctx.fill();
 	}
 };
@@ -56,14 +51,14 @@ var drawFinishLine = function () {
 	ctx.moveTo(500,600);
 	ctx.lineTo(600,500);
 	ctx.stroke();
-}
+};
 
 var move = function (){
 	ship.pX += ship.vX*timestep;
 	ship.pY += ship.vY*timestep;
 	ctx.fillStyle = "#FF0000";
 	ctx.beginPath();
-	ctx.arc(ship.pX, ship.pY, 10, 0,2*Math.PI);
+	ctx.arc(ship.pX, ship.pY, ship.radius, 0,2*Math.PI);
 	ctx.fill();
 };
 
@@ -82,11 +77,28 @@ var updateVelocity = function (){
 	}
 };
 
+var checkForCollision = function () {
+	for (i=0; i < planets.length; i++) {
+		p = planets[i];
+		distanceSquared = Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2);
+		if (distanceSquared < Math.pow(ship.radius + p.radius, 2)) {
+			gameFailed();
+		}
+	}
+};
+
 var checkIfGameFinished = function () {
 	if ((ship.pX + ship.pY) > 1100) {
-		console.log("You won!")
-		alert("You won!");
+		gameWon();
 	}
+};
+
+var gameFailed = function () {
+	console.log("YOU LOSE");
+}
+
+var gameWon = function () {
+	console.log("YOU WIN");
 }
 
 var step = function (){
@@ -95,19 +107,22 @@ var step = function (){
 	move();
 	drawPlanets();
 	drawFinishLine();
+	checkForCollision();
 	checkIfGameFinished();
 };
 
 
 generatePlanets(7);
-console.log(planets);
 
 
 for (i=0; i<10000*timestep; i+=timestep) {
   setTimeout(step, i);
 }
 
-</script> 
+</script>
 
 </body>
 </html>
+
+
+
