@@ -57,10 +57,12 @@ var drawFinishLine = function () {
 	ctx.stroke();
 }
 
+var timeStep = 50;
+
 var move = function (){
   var time = new Date();
-	ship.pX += ship.vX * time.getSeconds();
-	ship.pY += ship.vX * time.getSeconds();
+	ship.pX += ship.vX * timeStep;
+	ship.pY += ship.vX * timeStep;
 
 	ctx.fillStyle = "#FF0000";
 	ctx.beginPath();
