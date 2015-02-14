@@ -45,15 +45,19 @@ var drawPlanets = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
     	ctx.fillStyle = p.color;
-		ctx.fillRect(p.x, p.y, p.size, p.size);  	
+		ctx.beginPath();
+		ctx.arc(p.x, p.y, p.size, 0,2*Math.PI);
+		ctx.fill();
 	}
-	ctx.fillStyle = "#FF0000";
 };
 
 var move = function (){
 	ship.pX += ship.vX*timestep;
 	ship.pY += ship.vY*timestep;
-	ctx.fillRect(ship.pX, ship.pY, 10, 10);
+	ctx.fillStyle = "#FF0000";
+	ctx.beginPath();
+	ctx.arc(ship.pX, ship.pY, 10, 0,2*Math.PI);
+	ctx.fill();
 };
 
 var updateVelocity = function (){
