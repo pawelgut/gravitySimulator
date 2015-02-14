@@ -51,6 +51,13 @@ var drawPlanets = function () {
 	}
 };
 
+var drawFinishLine = function () {
+	ctx.fillStyle = "#000000";
+	ctx.moveTo(500,600);
+	ctx.lineTo(600,500);
+	ctx.stroke();
+}
+
 var move = function (){
 	ship.pX += ship.vX*timestep;
 	ship.pY += ship.vY*timestep;
@@ -75,11 +82,20 @@ var updateVelocity = function (){
 	}
 };
 
+var checkIfGameFinished = function () {
+	if ((ship.pX + ship.pY) > 1100) {
+		console.log("You won!")
+		alert("You won!");
+	}
+}
+
 var step = function (){
 	ctx.clearRect(0, 0, c.width, c.height);
 	updateVelocity();
 	move();
 	drawPlanets();
+	drawFinishLine();
+	checkIfGameFinished();
 };
 
 
