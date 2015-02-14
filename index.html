@@ -14,12 +14,17 @@ var planets = [];
 var planetTypes = [
 	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
 	{name:"earth", mass: 10, color:"#0000FF", radius: 10},
-	{name:"star", mass: 5, color:"#808080", radius: 5}
+	{name:"moon", mass: 5, color:"#808080", radius: 5}
 ];
 var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
 
 c.onmousedown = function(e){
-	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, radius:15, color:"#000000"});
+	distanceX = e.clientX - ship.pX;
+	distanceY = e.clientY - ship.pY;
+	magnitude = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+	componentX = ship.pX + 100*(distanceX/magnitude);
+	componentY = ship.pY + 100*(distanceY/magnitude);
+	planets.push({name:"boost", mass: 100, x: componentX, y: componentY, radius:15, color:"#000000"});
 };
 
 c.onmouseup = function(e){
@@ -80,9 +85,11 @@ var updateVelocity = function (){
 var checkForCollision = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
-		distanceSquared = Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2);
-		if (distanceSquared < Math.pow(ship.radius + p.radius, 2)) {
-			gameFailed();
+		if (p.name != "boost") {
+			distanceSquared = Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2);
+			if (distanceSquared < Math.pow(ship.radius + p.radius, 2)) {
+				gameFailed();
+			}
 		}
 	}
 };
@@ -105,8 +112,8 @@ var step = function (){
 	ctx.clearRect(0, 0, c.width, c.height);
 	updateVelocity();
 	move();
-	drawPlanets();
 	drawFinishLine();
+	drawPlanets();
 	checkForCollision();
 	checkIfGameFinished();
 };
