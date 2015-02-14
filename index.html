@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="600" height="600"
+<canvas id="myCanvas" width="1200" height="600"
 style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
@@ -48,8 +48,8 @@ var drawPlanets = function () {
 
 var drawFinishLine = function () {
 	ctx.fillStyle = "#000000";
-	ctx.moveTo(500,600);
-	ctx.lineTo(600,500);
+	ctx.moveTo(c.width, c.height - 100);
+	ctx.lineTo(c.width - 100, c.height);
 	ctx.stroke();
 };
 
@@ -112,7 +112,7 @@ var step = function (){
 };
 
 
-generatePlanets(7);
+generatePlanets(15);
 
 
 for (i=0; i<10000*timestep; i+=timestep) {
