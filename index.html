@@ -2,46 +2,43 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="1000" height="1000"
+<canvas id="canvas" width="1000" height="1000"
 style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
 <script>
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
 
-var timestep = 50;
 var planets = [
 	{name:"earth", mass: 10, x: 450, y: 250, size:15, color:"#808080"},
 	{name:"sun", mass: 20, x: 700, y: 500, size:20, color:"#FFFF00"}
-	];
+];
+
 var ship = {pX:300, pY:100, vX:0.03, vY:0};
 
-c.onmousedown = function(e){
-	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, size:15, color:"#000000"});
-}
-
-c.onmouseup = function(e){
-	planets.pop();
-}
-
-var drawPlanets = function () {
+function drawPlanets() {
+  var ctx = document.getElementById('canvas').getContext('2d');
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
-    	ctx.fillStyle = p.color;
-		ctx.fillRect(p.x, p.y, p.size, p.size);  	
+    ctx.fillStyle = p.color;
+		ctx.fillRect(p.x, p.y, p.size, p.size);
 	}
-	ctx.fillStyle = "#FF0000";
-};
+}
 
-var move = function (){
-	// ctx.clearRect(ship.pX, ship.pY, 10, 10);
-	ship.pX += ship.vX*timestep;
-	ship.pY += ship.vY*timestep;
-	ctx.fillRect(ship.pX, ship.pY, 10, 10);
-};
+function Start() {
+  window.requestAnimationFrame(Update);
+}
 
-var updateVelocity = function (){
+function Update() {
+
+  var ctx = document.getElementById('canvas').getContext('2d');
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.clearRect(0, 0, 1000, 1000);
+  ctx.fillStyle = "Red";
+
+  // ctx.save();
+  // ctx.translate(500, 500);
+
+  // update ship veloctiy
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
 		magnitude = Math.sqrt(Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2));
@@ -54,23 +51,20 @@ var updateVelocity = function (){
 		ship.vX += changeX;
 		ship.vY += changeY;
 	}
-};
+  // move ship
+  var time = new Date();
+	ship.pX += ship.vX * time.getSeconds();
+	ship.pY += ship.vY* time.getSeconds();
+	ctx.fillRect(ship.pX, ship.pY, 10, 10);
 
-var step = function (){
-	ctx.clearRect(0, 0, c.width, c.height);
-	updateVelocity();
-	move();
-	drawPlanets();
-};
+  drawPlanets();
 
-
-
-
-for (i=0; i<10000*timestep; i+=timestep) {
-  setTimeout(step, i);
+  window.requestAnimationFrame(Update);
 }
 
-</script> 
+Start();
+
+</script>
 
 </body>
 </html>
