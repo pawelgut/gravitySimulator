@@ -9,7 +9,6 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
-var timestep = 50;
 var finishLineSize = 100;
 var planets = [];
 var planetTypes = [
@@ -18,6 +17,8 @@ var planetTypes = [
 	{name:"moon", mass: 5, color:"#808080", radius: 5}
 ];
 var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
+var lastDate = new Date();
+var timestep;
 
 c.onmousedown = function(e){
 	distanceX = e.clientX - ship.pX;
@@ -113,6 +114,8 @@ var gameWon = function () {
 };
 
 var step = function (){
+	timestep = new Date() - lastDate;
+	lastDate = new Date();
 	ctx.clearRect(0, 0, c.width, c.height);
 	updateVelocity();
 	move();
@@ -120,15 +123,11 @@ var step = function (){
 	drawPlanets();
 	checkForCollision();
 	checkIfGameFinished();
+	window.requestAnimationFrame(step);
 };
 
-
 generatePlanets(15);
-
-
-for (i=0; i<10000*timestep; i+=timestep) {
-  setTimeout(step, i);
-}
+window.requestAnimationFrame(step);
 
 </script>
 
