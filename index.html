@@ -17,12 +17,21 @@ var planets = [
 	];
 var ship = {pX:300, pY:100, vX:0.03, vY:0};
 
+c.onmousedown = function(e){
+	planets.push({name:"boost", mass: 10, x: e.clientX, y: e.clientY, size:15, color:"#000000"});
+}
+
+c.onmouseup = function(e){
+	planets.pop();
+}
+
 var drawPlanets = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
     	ctx.fillStyle = p.color;
 		ctx.fillRect(p.x, p.y, p.size, p.size);  	
 	}
+	ctx.fillStyle = "#FF0000";
 };
 
 var move = function (){
@@ -48,13 +57,15 @@ var updateVelocity = function (){
 };
 
 var step = function (){
+	ctx.clearRect(0, 0, c.width, c.height);
 	updateVelocity();
 	move();
+	drawPlanets();
 };
 
 
-drawPlanets();
-ctx.fillStyle = "#FF0000";
+
+
 for (i=0; i<10000*timestep; i+=timestep) {
   setTimeout(step, i);
 }
