@@ -10,6 +10,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 var timestep = 50;
+var finishLineSize = 100;
 var planets = [];
 var planetTypes = [
 	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
@@ -53,8 +54,8 @@ var drawPlanets = function () {
 
 var drawFinishLine = function () {
 	ctx.fillStyle = "#000000";
-	ctx.moveTo(c.width, c.height - 100);
-	ctx.lineTo(c.width - 100, c.height);
+	ctx.moveTo(c.width, c.height - finishLineSize);
+	ctx.lineTo(c.width - finishLineSize, c.height);
 	ctx.stroke();
 };
 
@@ -95,7 +96,7 @@ var checkForCollision = function () {
 };
 
 var checkIfGameFinished = function () {
-	if ((ship.pX + ship.pY) > 1100) {
+	if ((ship.pX + ship.pY) > (c.width + c.height - finishLineSize)) {
 		gameWon();
 	}
 };
