@@ -1,7 +1,7 @@
 var c = document.getElementById("canvas");
 var ctx = document.getElementById("canvas").getContext("2d");
-var generator = new GravityObjectGenerator(0.05);
-var gravityObjects = generator.generate(10);
+var generator = new GravityObjectGenerator(0.00005);
+var gravityObjects = generator.generate(500);
 var lastTime = new Date();
 var gravConstant = 0.1;
 
