@@ -16,46 +16,67 @@ function getRandomInt(min, max) {
 
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
-
+var planets = [];
+var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
+var lastDate = new Date();
+var timestep;
 var finishLineSize = 100;
 
-var Planet = function(type) {
-  this.type = type;
-  this.x = 0;
-  this.y = 0;
-  switch (type) {
+var GravityObject = function(x, y, mass, radius) {
+  this.x = x;
+  this.y = y;
+  this.mass = mass;
+  this.radius = radius;
+};
+
+GravityObject.prototype.draw = function() {
+  ctx.fillStyle = p.color;
+  ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius, 0,2*Math.PI);
+  ctx.fill();
+}
+
+var Planet = function(x, y, mass, radius, color) {
+  GravityObject.call(this, x, y, mass, radius);
+  this.color = color;
+};
+
+Planet.prototype = Object.create(GravityObject.prototype);
+Planet.prototype.constructor = Planet;
+
+function generatePlanet() {
+  console.log('called');
+  var randPosition = {
+    x: Math.floor(Math.random() * (c.width - 100)),
+    y: Math.floor(Math.random() * (c.width - 100))
+  };
+  var planet;
+  switch (getRandomInt(1,4)) {
     case 1:
-      this.name = "star";
-      this.mass = 20;
-      this.color = "#FFFF00";
-      this.radius = 20;
+      planet = new Planet(randPosition.x, randPosition.y, 20, 20, "#FFFF00");
+      console.log(planet);
       break;
     case 2:
-      this.name = "earth";
-      this.mass = 10;
-      this.color = "#0000FF";
-      this.radius = 10;
+      planet = new Planet(randPosition.x, randPosition.y, 10, 10, "#0000FF");
+      console.log(planet);
       break;
     case 3:
-      this.name = "moon";
-      this.mass = 5;
-      this.color = "#808080";
-      this.radius = 5;
+      planet = new Planet(randPosition.x, randPosition.y, 5, 5, "#808080");
+      console.log(planet);
       break;
     default:
       // do nothing
   }
+  return planet;
+}
+
+var generatePlanets = function (numberPlanets) {
+	for (i=0; i < numberPlanets; i++) {
+    planet = generatePlanet();
+		planets.push(planet);
+	}
 };
 
-var planets = [];
-var planetTypes = [
-	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
-	{name:"earth", mass: 10, color:"#0000FF", radius: 10},
-	{name:"moon", mass: 5, color:"#808080", radius: 5}
-];
-var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
-var lastDate = new Date();
-var timestep;
 
 c.onmousedown = function(e){
 	distanceX = e.clientX - ship.pX;
@@ -68,26 +89,6 @@ c.onmousedown = function(e){
 
 c.onmouseup = function(e){
 	planets.pop();
-};
-
-var generatePlanets = function (numberPlanets) {
-	for (i=0; i < numberPlanets; i++) {
-    planet = new Planet(getRandomInt(1,4));
-
-    /*
-		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
-		planet = {
-      name: planetType.name,
-      mass: planetType.mass,
-      color: planetType.color,
-      radius: planetType.radius
-    };
-
-    */
-		planet.x = Math.floor(Math.random() * (c.width - 100));
-		planet.y = Math.floor(Math.random() * (c.height - 100));
-		planets.push(planet);
-	}
 };
 
 var drawPlanets = function () {
