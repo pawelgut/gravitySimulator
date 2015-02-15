@@ -24,27 +24,27 @@ GravityObject.prototype.calculateForce = function(obj) {
 		this.forceX = (distanceX*force)/Math.sqrt(distanceSquared);
 		this.forceY = (distanceY*force)/Math.sqrt(distanceSquared);
 	}
-}
+};
 
 GravityObject.prototype.applyAcceleration = function(timestep) {
 	this.vX += (this.forceX/this.mass)*timestep;
 	this.vY += (this.forceY/this.mass)*timestep;
-}
+};
 
 GravityObject.prototype.applyVelocity = function(timestep) {
 	this.x += this.vX*timestep;
 	this.y += this.vY*timestep;
-}
+};
 
 GravityObject.prototype.draw = function() {
 	ctx.fillStyle = this.color;
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
 	ctx.fill();
-}
+};
 
 GravityObject.prototype.move = function(timestep) {
 	this.applyAcceleration(timestep);
 	this.applyVelocity(timestep);
 	this.draw();
-}
+};

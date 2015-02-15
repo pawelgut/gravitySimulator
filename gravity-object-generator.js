@@ -6,12 +6,12 @@ function GravityObjectGenerator(maxVelocity) {
 // Using Math.round() will give you a non-uniform distribution!
 GravityObjectGenerator.prototype.getRandomInt = function(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 
 GravityObjectGenerator.prototype.generateObject = function () {
 	rand = {
 		x: Math.floor(Math.random() * (c.width - 100)),
-		y: Math.floor(Math.random() * (c.width - 100)),
+		y: Math.floor(Math.random() * (c.height - 100)),
 		vX: (2*Math.random() - 1) * this.maxVelocity,
 		vY: (2*Math.random() - 1) * this.maxVelocity
 	};
@@ -27,7 +27,7 @@ GravityObjectGenerator.prototype.generateObject = function () {
 			break;
   }
   return object;
-}
+};
 
 GravityObjectGenerator.prototype.generate = function (numberObjects) {
 	objects = [];
