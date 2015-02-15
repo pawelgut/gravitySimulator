@@ -2,134 +2,13 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="1200" height="600"
+<canvas id="canvas" width="1200" height="600"
 style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-<script>
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
-var finishLineSize = 100;
-var planets = [];
-var planetTypes = [
-	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
-	{name:"earth", mass: 10, color:"#0000FF", radius: 10},
-	{name:"moon", mass: 5, color:"#808080", radius: 5}
-];
-var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
-var lastDate = new Date();
-var timestep;
-
-c.onmousedown = function(e){
-	distanceX = e.clientX - ship.pX;
-	distanceY = e.clientY - ship.pY;
-	magnitude = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-	componentX = ship.pX + 100*(distanceX/magnitude);
-	componentY = ship.pY + 100*(distanceY/magnitude);
-	planets.push({name:"boost", mass: 100, x: componentX, y: componentY, radius:15, color:"#000000"});
-};
-
-c.onmouseup = function(e){
-	planets.pop();
-};
-
-var generatePlanets = function (numberPlanets) {
-	for (i=0; i < numberPlanets; i++) {
-		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
-		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, radius: planetType.radius};
-		planet.x = Math.floor(Math.random() * (c.width - 100));
-		planet.y = Math.floor(Math.random() * (c.height - 100));
-		planets.push(planet);
-	}
-};
-
-var drawPlanets = function () {
-	for (i=0; i < planets.length; i++) {
-		p = planets[i];
-    	ctx.fillStyle = p.color;
-		ctx.beginPath();
-		ctx.arc(p.x, p.y, p.radius, 0,2*Math.PI);
-		ctx.fill();
-	}
-};
-
-var drawFinishLine = function () {
-	ctx.fillStyle = "#000000";
-	ctx.moveTo(c.width, c.height - finishLineSize);
-	ctx.lineTo(c.width - finishLineSize, c.height);
-	ctx.stroke();
-};
-
-var move = function (){
-	ship.pX += ship.vX*timestep;
-	ship.pY += ship.vY*timestep;
-	ctx.fillStyle = "#FF0000";
-	ctx.beginPath();
-	ctx.arc(ship.pX, ship.pY, ship.radius, 0,2*Math.PI);
-	ctx.fill();
-};
-
-var updateVelocity = function (){
-	for (i=0; i < planets.length; i++) {
-		p = planets[i];
-		magnitude = Math.sqrt(Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2));
-		componentX = (p.x - ship.pX)/magnitude;
-		componentY = (p.y - ship.pY)/magnitude;
-	    absForce = p.mass/Math.pow(magnitude, 2);
-		changeX = componentX*absForce;
-		changeY = componentY*absForce;
-        if (!isColliding(p)) {
-			ship.vX += changeX;
-			ship.vY += changeY;
-		}
-	}
-};
-
-var checkForCollision = function () {
-	for (i=0; i < planets.length; i++) {
-		p = planets[i];
-		if ((p.name != "boost") && isColliding(p)) {
-			gameFailed();
-		}
-	}
-};
-
-var isColliding = function (planet) {
-	distanceSquared = Math.pow(planet.x - ship.pX, 2) + Math.pow(planet.y - ship.pY, 2);
-	return distanceSquared < Math.pow(ship.radius + planet.radius, 2)
-};
-
-var checkIfGameFinished = function () {
-	if ((ship.pX + ship.pY) > (c.width + c.height - finishLineSize)) {
-		gameWon();
-	}
-};
-
-var gameFailed = function () {
-	console.log("YOU LOSE");
-};
-
-var gameWon = function () {
-	console.log("YOU WIN");
-};
-
-var step = function (){
-	timestep = new Date() - lastDate;
-	lastDate = new Date();
-	ctx.clearRect(0, 0, c.width, c.height);
-	updateVelocity();
-	move();
-	drawFinishLine();
-	drawPlanets();
-	checkForCollision();
-	checkIfGameFinished();
-	window.requestAnimationFrame(step);
-};
-
-generatePlanets(15);
-window.requestAnimationFrame(step);
-
-</script>
+<script src="ship.js"></script>
+<script src="planet.js"></script>
+<script src="main.js"></script>
 
 </body>
 </html>
