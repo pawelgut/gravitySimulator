@@ -17,10 +17,48 @@ function getRandomInt(min, max) {
 var c = document.getElementById("canvas");
 var ctx = document.getElementById("canvas").getContext("2d");
 var planets = [];
-var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
+// var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
 var lastDate = new Date();
 var timestep;
 var finishLineSize = 100;
+
+var Ship = function(x, y, vX, vY, radius) {
+  this.x = x;
+  this.y = y;
+  this.vX = vX;
+  this.vY = vY;
+  this.radius = radius;
+};
+
+Ship.prototype.draw = function() {
+	ctx.fillStyle = "#FF0000";
+	ctx.beginPath();
+	ctx.arc(this.x, this.y, this.radius, 0,2*Math.PI);
+	ctx.fill();
+
+};
+
+Ship.prototype.move = function() {
+  console.log('ship called');
+	for (i=0; i < planets.length; i++) {
+		p = planets[i];
+		magnitude = Math.sqrt(Math.pow(p.x - this.x, 2) + Math.pow(p.y - this.y, 2));
+		componentX = (p.x - this.x)/magnitude;
+		componentY = (p.y - this.y)/magnitude;
+    absForce = p.mass/Math.pow(magnitude, 2);
+		changeX = componentX*absForce;
+		changeY = componentY*absForce;
+    if (!isColliding(p)) {
+			this.vX += changeX;
+			this.vY += changeY;
+		}
+	}
+	this.x += this.vX*timestep;
+	this.y += this.vY*timestep;
+  this.draw();
+ };
+
+var ship = new Ship(10, 10, 0.03, 0.03, 10);
 
 var GravityObject = function(x, y, mass, radius, color) {
   this.x = x;
@@ -79,11 +117,11 @@ var generatePlanets = function (numberPlanets) {
 };
 
 c.onmousedown = function(e){
-	distanceX = e.clientX - ship.pX;
-	distanceY = e.clientY - ship.pY;
+	distanceX = e.clientX - ship.x;
+	distanceY = e.clientY - ship.y;
 	magnitude = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-	componentX = ship.pX + 100 * (distanceX / magnitude);
-	componentY = ship.pY + 100 * (distanceY / magnitude);
+	componentX = ship.x + 100 * (distanceX / magnitude);
+	componentY = ship.y + 100 * (distanceY / magnitude);
   planets.push(new GravityObject(componentX, componentY, 100, 15, "#000000"));
 };
 
@@ -105,30 +143,6 @@ var drawFinishLine = function () {
 	ctx.stroke();
 };
 
-var move = function (){
-	ship.pX += ship.vX*timestep;
-	ship.pY += ship.vY*timestep;
-	ctx.fillStyle = "#FF0000";
-	ctx.beginPath();
-	ctx.arc(ship.pX, ship.pY, ship.radius, 0,2*Math.PI);
-	ctx.fill();
-};
-
-var updateVelocity = function (){
-	for (i=0; i < planets.length; i++) {
-		p = planets[i];
-		magnitude = Math.sqrt(Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2));
-		componentX = (p.x - ship.pX)/magnitude;
-		componentY = (p.y - ship.pY)/magnitude;
-    absForce = p.mass/Math.pow(magnitude, 2);
-		changeX = componentX*absForce;
-		changeY = componentY*absForce;
-    if (!isColliding(p)) {
-			ship.vX += changeX;
-			ship.vY += changeY;
-		}
-	}
-};
 
 var checkForCollision = function () {
 	for (i=0; i < planets.length; i++) {
@@ -140,12 +154,12 @@ var checkForCollision = function () {
 };
 
 var isColliding = function (planet) {
-	distanceSquared = Math.pow(planet.x - ship.pX, 2) + Math.pow(planet.y - ship.pY, 2);
+	distanceSquared = Math.pow(planet.x - ship.x, 2) + Math.pow(planet.y - ship.y, 2);
 	return distanceSquared < Math.pow(ship.radius + planet.radius, 2)
 };
 
 var checkIfGameFinished = function () {
-	if ((ship.pX + ship.pY) > (c.width + c.height - finishLineSize)) {
+	if ((ship.x + ship.y) > (c.width + c.height - finishLineSize)) {
 		gameWon();
 	}
 };
@@ -162,8 +176,7 @@ function Update() {
 	timestep = new Date() - lastDate;
 	lastDate = new Date();
 	ctx.clearRect(0, 0, c.width, c.height);
-	updateVelocity();
-	move();
+  ship.move();
 	drawFinishLine();
 	drawPlanets();
 	checkForCollision();
