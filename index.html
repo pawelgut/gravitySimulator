@@ -7,9 +7,46 @@ style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
 <script>
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
+
 var finishLineSize = 100;
+
+var Planet = function(type) {
+  this.type = type;
+  this.x = 0;
+  this.y = 0;
+  switch (type) {
+    case 1:
+      this.name = "star";
+      this.mass = 20;
+      this.color = "#FFFF00";
+      this.radius = 20;
+      break;
+    case 2:
+      this.name = "earth";
+      this.mass = 10;
+      this.color = "#0000FF";
+      this.radius = 10;
+      break;
+    case 3:
+      this.name = "moon";
+      this.mass = 5;
+      this.color = "#808080";
+      this.radius = 5;
+      break;
+    default:
+      // do nothing
+  }
+};
+
 var planets = [];
 var planetTypes = [
 	{name:"star", mass: 20, color:"#FFFF00", radius: 20},
@@ -35,8 +72,18 @@ c.onmouseup = function(e){
 
 var generatePlanets = function (numberPlanets) {
 	for (i=0; i < numberPlanets; i++) {
+    planet = new Planet(getRandomInt(1,4));
+
+    /*
 		planetType = planetTypes[Math.floor(Math.random() * planetTypes.length)];
-		planet = {name: planetType.name, mass: planetType.mass, color: planetType.color, radius: planetType.radius};
+		planet = {
+      name: planetType.name,
+      mass: planetType.mass,
+      color: planetType.color,
+      radius: planetType.radius
+    };
+
+    */
 		planet.x = Math.floor(Math.random() * (c.width - 100));
 		planet.y = Math.floor(Math.random() * (c.height - 100));
 		planets.push(planet);
@@ -46,7 +93,7 @@ var generatePlanets = function (numberPlanets) {
 var drawPlanets = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
-    	ctx.fillStyle = p.color;
+    ctx.fillStyle = p.color;
 		ctx.beginPath();
 		ctx.arc(p.x, p.y, p.radius, 0,2*Math.PI);
 		ctx.fill();
@@ -75,10 +122,10 @@ var updateVelocity = function (){
 		magnitude = Math.sqrt(Math.pow(p.x - ship.pX, 2) + Math.pow(p.y - ship.pY, 2));
 		componentX = (p.x - ship.pX)/magnitude;
 		componentY = (p.y - ship.pY)/magnitude;
-	    absForce = p.mass/Math.pow(magnitude, 2);
+    absForce = p.mass/Math.pow(magnitude, 2);
 		changeX = componentX*absForce;
 		changeY = componentY*absForce;
-        if (!isColliding(p)) {
+    if (!isColliding(p)) {
 			ship.vX += changeX;
 			ship.vY += changeY;
 		}
