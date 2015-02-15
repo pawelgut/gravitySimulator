@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="1200" height="600"
+<canvas id="canvas" width="1200" height="600"
 style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
@@ -14,19 +14,20 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
+var c = document.getElementById("canvas");
+var ctx = document.getElementById("canvas").getContext("2d");
 var planets = [];
 var ship = {pX:10, pY:10, vX:0.03, vY:0.03, radius: 10};
 var lastDate = new Date();
 var timestep;
 var finishLineSize = 100;
 
-var GravityObject = function(x, y, mass, radius) {
+var GravityObject = function(x, y, mass, radius, color) {
   this.x = x;
   this.y = y;
   this.mass = mass;
   this.radius = radius;
+  this.color = color;
 };
 
 GravityObject.prototype.draw = function() {
@@ -37,12 +38,12 @@ GravityObject.prototype.draw = function() {
 }
 
 var Planet = function(x, y, mass, radius, color) {
-  GravityObject.call(this, x, y, mass, radius);
-  this.color = color;
+  GravityObject.call(this, x, y, mass, radius, color);
 };
 
 Planet.prototype = Object.create(GravityObject.prototype);
 Planet.prototype.constructor = Planet;
+
 
 function generatePlanet() {
   console.log('called');
@@ -71,7 +72,7 @@ function generatePlanet() {
 }
 
 var generatePlanets = function (numberPlanets) {
-	for (i=0; i < numberPlanets; i++) {
+	for (i = 0; i < numberPlanets; i++) {
     planet = generatePlanet();
 		planets.push(planet);
 	}
@@ -82,9 +83,9 @@ c.onmousedown = function(e){
 	distanceX = e.clientX - ship.pX;
 	distanceY = e.clientY - ship.pY;
 	magnitude = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-	componentX = ship.pX + 100*(distanceX/magnitude);
-	componentY = ship.pY + 100*(distanceY/magnitude);
-	planets.push({name:"boost", mass: 100, x: componentX, y: componentY, radius:15, color:"#000000"});
+	componentX = ship.pX + 100 * (distanceX / magnitude);
+	componentY = ship.pY + 100 * (distanceY / magnitude);
+  planets.push(new GravityObject(componentX, componentY, 100, 15, "#000000"));
 };
 
 c.onmouseup = function(e){
@@ -94,10 +95,7 @@ c.onmouseup = function(e){
 var drawPlanets = function () {
 	for (i=0; i < planets.length; i++) {
 		p = planets[i];
-    ctx.fillStyle = p.color;
-		ctx.beginPath();
-		ctx.arc(p.x, p.y, p.radius, 0,2*Math.PI);
-		ctx.fill();
+    p.draw();
 	}
 };
 
